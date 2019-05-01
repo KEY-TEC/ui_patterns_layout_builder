@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * UI Patterns Layout Builder module file.
+ */
+
+use Drupal\ui_patterns\UiPatterns;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function ui_patterns_layout_builder_element_info_alter(array &$info) {
+  if (isset($info['pattern'])) {
+    $info['pattern']['#pre_render'][] = [
+      "Drupal\ui_patterns_layout_builder\Element\PatternLayoutBuilder",
+      "processLayoutBuilderRegions",
+    ];
+  }
+}
+
+/**
+ * Implements hook_layout_alter().
+ */
+function ui_patterns_layout_builder_layout_alter(&$definitions) {
+  foreach (UiPatterns::getPatternDefinitions() as $pattern_definition) {
+    if (isset($definitions['pattern_' . $pattern_definition->id()])) {
+      /** @var \Drupal\Core\Layout\LayoutDefinition $layout */
+      $layout = $definitions['pattern_' . $pattern_definition->id()];
+      $layout->setClass('\Drupal\ui_patterns_layout_builder\Plugin\Layout\PatternLayoutBuilder');
+    }
+  }
+}
+
+/**
+ * Implements hook_builder_module_implements_alter().
+ */
+function ui_patterns_layout_builder_module_implements_alter(&$implementations, $hook) {
+  if ($hook === 'layout_alter') {
+    // Ensure that this module's implementation of hook_layout_alter() runs
+    // last so that ui_patterns_layout run before it.
+    $group = $implementations['ui_patterns_layout_builder'];
+    unset($implementations['ui_patterns_layout_builder']);
+    $implementations['ui_patterns_layout_builder'] = $group;
+  }
+}
