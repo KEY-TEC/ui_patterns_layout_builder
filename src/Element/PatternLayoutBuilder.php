@@ -28,6 +28,9 @@ class PatternLayoutBuilder {
       foreach (Element::children($element) as $key) {
         if ($definiton->hasField($key)) {
           $region_children = Element::children($element[$key]);
+          if (isset($element['#' . $key]) && is_string($element['#' . $key])) {
+            continue;
+          }
           foreach ($region_children as $region_key) {
             $element['#' . $key][$region_key] = $element[$key][$region_key];
           }
