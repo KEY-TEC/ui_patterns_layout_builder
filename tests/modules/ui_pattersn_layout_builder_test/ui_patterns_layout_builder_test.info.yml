@@ -1,6 +1,6 @@
-name: 'Layout builder test'
+name: 'Layout Builder test'
 type: module
-description: 'Layout builder test.'
+description: 'Layout Builder test.'
 package: Testing
 version: VERSION
 core: 8.x
